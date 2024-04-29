@@ -2,7 +2,7 @@ import React from "react";
 import { csv, json } from "d3";
 import styles from "../styles/week12_styles.module.css";
 import { SymbolMap } from "./components/symbolMap";
-import { AggregateDataByYear, NormalizeData } from "./components/utils";
+import { AggregateDataByYear, HandlerPosition, NormalizeData } from "./components/utils";
 import { MultipleLineChart} from "./components/charts";
 import { Tooltip } from "./components/tooltip";
 
@@ -19,6 +19,7 @@ function useData(csvPath){
             data.forEach(d => {
                 d.AcresBurned = +d.AcresBurned;
                 d.ArchiveYear = +d.ArchiveYear;
+                d.Name = d.Name;
                 d.Counties = d.Counties;
                 d.Latitude = +d.Latitude;
                 d.Longitude = +d.Longitude;
@@ -28,6 +29,7 @@ function useData(csvPath){
                 d.Injuries = +d.Injuries;
                 d.CrewsInvolved = +d.CrewsInvolved;
                 d.StructuresDestroyed = +d.StructuresDestroyed;
+                d.Engines = +d.Engines;
                 //more to be added
 
             });
@@ -48,8 +50,10 @@ function useMap(jsonPath) {
 }
 
 function CalFire(){
-    const [year, setYear] = React.useState('0');
+    const [year, setYear] = React.useState('2013');
     const [selectedUniqueId,setSelectedUniqueId] = React.useState(null);
+    const [tooltipX, setTooltipX]=React.useState(null);
+    const [tooltipY, setTooltipY]=React.useState(null);
 
     const WIDTH = 1600;
     const HEIGHT = 1000;
@@ -59,7 +63,6 @@ function CalFire(){
 
     const dataAll = useData(csvUrl);
     const map = useMap(mapUrl);
-    const YEAR = ['2013', '2014', '2015', '2016', '2017', '2018', '2019'];
     
     if (!map || !dataAll) {
             return <pre>Loading...</pre>;
@@ -82,7 +85,7 @@ function CalFire(){
 
     // filter out data according to year
     const yearData = data.filter( d => {
-        return d.ArchiveYear == YEAR[year] ;
+        return d.ArchiveYear == year ;
     });
 
     const mapData = yearData.filter( d =>{
@@ -91,29 +94,32 @@ function CalFire(){
 
     // Aggregate data by year
     const aggregatedData = AggregateDataByYear(data);
-    
-    const selectedPoint = dataAll.filter(d => d.station===selectedUniqueId)[0];
-     // Note: stationYearData is the data of the year of a seleted station. 
-     const stationYearData = dataAll.filter( d=> {
-        return d.UniqueId ==selectedUniqueId;
-    }); 
+
+    const selectedFire = dataAll.filter(d => d.UniqueId===selectedUniqueId)[0];
     
     return (<div className={styles.body}>
         <div className={styles.slidecontainer}>
-            <input key="slide" type='range' min='0' max='6' value={year} step='1' onChange={changeHandler} class={styles.slider}/>
-            <input key="yearText" type="text" value={YEAR[year]} readOnly/>
+            <input key="slide" type='range' min='2013' max='2019' value={year} step='1' onChange={changeHandler} className={styles.slider}/>
+            <div style={{ position: 'absolute', left: `calc(${HandlerPosition(year)}%)`, bottom: '-20px' }}>
+                {year}
+            </div>
         </div>
             <svg width={WIDTH} height={HEIGHT}>
                 <g>
-                <SymbolMap offsetX={margin.left} offsetY={margin.top} height={innerHeight} 
-                width={(innerWidth-margin.gap)/2} data={mapData} map={map}selectedUniqueId={selectedUniqueId} 
-               setSelectedUniqueId={setSelectedUniqueId}/>
-                {<MultipleLineChart offsetX={margin.left+innerWidth/2+100} offsetY={margin.top} data={aggregatedData} height={(innerHeight-margin.gap)/2} 
-                width={(innerWidth-margin.gap)/2} selectedYear={year} setSelectedYear={setYear}/>}
+                <SymbolMap offsetX={margin.left} offsetY={margin.top} height={innerHeight} width={(innerWidth-margin.gap)/2} 
+                data={mapData} map={map}
+                selectedUniqueId={selectedUniqueId} setSelectedUniqueId={setSelectedUniqueId}
+                setTooltipX={setTooltipX} setTooltipY={setTooltipY}/>
+
+                <MultipleLineChart offsetX={margin.left+innerWidth/2+100} offsetY={margin.top} data={aggregatedData} height={(innerHeight-margin.gap)/2} 
+                width={(innerWidth-margin.gap)/2} selectedYear={year} setSelectedYear={setYear}/>
+
                 </g>
-                {/* <Tooltip d={selectedPoint} stationYearData={stationYearData} left={margin.left+innerWidth/2} 
-                top={margin.top+40+innerHeight/2} height={(innerHeight-margin.gap)/2} width={(innerWidth-margin.gap)/2}/> */}
+                
             </svg>
+        
+        <div><Tooltip d={selectedFire} x={tooltipX} y={tooltipY}></Tooltip></div>
+            
         {/* <div style={{position: "absolute", textAlign: "left", width: "240px",left:"40px", top:"40px"}}>
             <h3>Citi bike 2020</h3>
             <p>A visualization of the numbers of citi bike riders over 2020.</p>

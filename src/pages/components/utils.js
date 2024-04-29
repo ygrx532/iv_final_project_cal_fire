@@ -2,13 +2,13 @@ function AggregateDataByYear(data) {
     const result = data.reduce((acc, d) => {
     const year = d.ArchiveYear;
     if (!acc[year]) {
-        acc[year] = {year: year, totalAcresBurned:0, totalInjuries: 0, totalCrewsInvolved: 0, totalPersonelInvolved:0, totalStructuresDestroyed:0 };
+        acc[year] = {year: year, totalAcresBurned:0, totalInjuries: 0, totalCrewsInvolved: 0, totalPersonnelInvolved:0, totalStructuresDestroyed:0 };
         }
         acc[year].totalAcresBurned += d.AcresBurned
         acc[year].totalInjuries += d.Injuries;
         acc[year].totalStructuresDestroyed += d.StructuresDestroyed;
         acc[year].totalCrewsInvolved += d.CrewsInvolved;
-        acc[year].totalPersonelInvolved += d.PersonnelInvolved;
+        acc[year].totalPersonnelInvolved += d.PersonnelInvolved;
         return acc;
         },{});
     return Object.values(result);
@@ -39,5 +39,11 @@ function NormalizeData(data) {
     });
   }
 
+  const HandlerPosition = (value) => {
+    const min = 2013;
+    const max = 2019;
+    return ((value - min) / (max - min)) * 90;
+  };
 
-export { AggregateDataByYear, NormalizeData}
+
+export { AggregateDataByYear, NormalizeData, HandlerPosition}

@@ -5,11 +5,23 @@ import { scaleLinear, min, max } from "d3";
 
 
 export function SymbolMap(props) {
-    const {offsetX, offsetY, map, data, height, width,selectedUniqueId,setSelectedUniqueId} = props;
+    const {offsetX, offsetY, map, data, height, width,selectedUniqueId,setSelectedUniqueId, setTooltipX, setTooltipY} = props;
     const projection = geoMercator().fitSize([width, height], map);
     const path = geoPath(projection);
-    const radius = scaleLinear().range([2, 20])
+    const radius = scaleLinear().range([4, 20])
     .domain([min(data, d => d.AcresBurned), max(data, d => d.AcresBurned)]);
+
+    const handleMouseEnter = (d, event) => {
+        setSelectedUniqueId(d.UniqueId);
+        setTooltipX(event.pageX);
+        setTooltipY(event.pageY);
+    };
+
+    const handleMouseOut = () => {
+        setSelectedUniqueId(null);
+        setTooltipX(null);
+        setTooltipY(null);
+    };
     
     const getColor = (selectedUniqueId, uniqueId) => {
         return selectedUniqueId&&uniqueId===selectedUniqueId ? "steelblue" : "red";
@@ -24,10 +36,10 @@ export function SymbolMap(props) {
                 return <circle key={d.UniqueId} cx={x} cy={y} r={radius(d.AcresBurned)} opacity={0.7} stroke={'black'}
                 fill={getColor(selectedUniqueId, d.UniqueId)} 
                 onMouseEnter={(event)=> {
-                   setSelectedUniqueId(d.UniqueId);
+                   handleMouseEnter(d,event);
                 }} 
                 onMouseOut={()=> {
-                   setSelectedUniqueId(null);
+                   handleMouseOut();
                 }} />
             })}
         </g>
