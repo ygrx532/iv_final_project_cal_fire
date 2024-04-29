@@ -1,11 +1,11 @@
 import React from "react";
-import 'bootstrap/dist/css/bootstrap.css'
 import { csv, json } from "d3";
-import { Row, Col, Container } from "react-bootstrap";
-import { groupByAirline, groupByAirport } from "./component/utils";
-import { AirportMap }  from "./component/airportMap";
-import { BarChart } from "./component/barChart";
-import { AirportBubble} from "./component/airportBubble";
+import styles from "../styles/week12_styles.module.css";
+import { SymbolMap } from "./components/symbolMap";
+import { AggregateDataByYear, NormalizeData } from "./components/utils";
+import { MultipleLineChart} from "./components/charts";
+import { Tooltip } from "./components/tooltip";
+
 
 
 const csvUrl = 'https://gist.githubusercontent.com/james-shan/fb6d4b947413a11d0c7f3d9edb4014c3/raw/8b1559c0546799acb14eb647717af95207844bec/California_Fire_Incidents.csv';
@@ -17,10 +17,19 @@ function useData(csvPath){
     React.useEffect(() => {
         csv(csvPath).then(data => {
             data.forEach(d => {
-                d.SourceLatitude = +d.SourceLatitude
-                d.SourceLongitude = +d.SourceLongitude
-                d.DestLatitude = +d.DestLatitude
-                d.DestLongitude = +d.DestLongitude
+                d.AcresBurned = +d.AcresBurned;
+                d.ArchiveYear = +d.ArchiveYear;
+                d.Counties = d.Counties;
+                d.Latitude = +d.Latitude;
+                d.Longitude = +d.Longitude;
+                d.MajorIncident = d.MajorIncident;
+                d.UniqueId = d.UniqueId;
+                d.PersonnelInvolved = +d.PersonnelInvolved;
+                d.Injuries = +d.Injuries;
+                d.CrewsInvolved = +d.CrewsInvolved;
+                d.StructuresDestroyed = +d.StructuresDestroyed;
+                //more to be added
+
             });
             setData(data);
         });
@@ -38,68 +47,79 @@ function useMap(jsonPath) {
     return data;
 }
 
-
 function CalFire(){
-    const [selectedAirline, setSelectedAirline]=React.useState(null);
-    const barchart_width = 400;
-    const barchart_height = 400;
-    const barchart_margin = { top: 10, bottom: 50, left: 130, right: 10 };
-    const barchart_inner_width = barchart_width - barchart_margin.left - barchart_margin.right;
-    const barchart_inner_height = barchart_height - barchart_margin.top - barchart_margin.bottom;
-    const map_width = 600;
-    const map_height = 400;
-    const hub_width = 400;
-    const hub_height = 400;
+    const [year, setYear] = React.useState('0');
+    const [selectedUniqueId,setSelectedUniqueId] = React.useState(null);
 
-    const routes = useData(csvUrl);
+    const WIDTH = 1600;
+    const HEIGHT = 1000;
+    const margin = { top: 20, right: 80, bottom: 160, left: 80, gap:80 };
+    const innerWidth = WIDTH - margin.left - margin.right;
+    const innerHeight = HEIGHT - margin.top - margin.bottom;
+
+    const dataAll = useData(csvUrl);
     const map = useMap(mapUrl);
+    const YEAR = ['2013', '2014', '2015', '2016', '2017', '2018', '2019'];
     
-    if (!map || !routes) {
-        return <pre>Loading...</pre>;
-    };
-    let airlines = groupByAirline(routes);
-    let airports = groupByAirport(routes);
-    // console.log(cities);
-    // console.log(airports);
+    if (!map || !dataAll) {
+            return <pre>Loading...</pre>;
+        };
 
-    return (<Container >
-            <Row className={"justify-content-md-left"}>
-                <Col lg={10} >
-                    <h1 className={styles.h1Style}>Airlines Routes</h1> 
-                </Col>
-            </Row> 
-            <Row className={"justify-content-md-left"}>
-                <Col lg={4}>
-                    <h2>Airlines</h2>
-                    <svg className={styles.svgStyle} id={"barchart"} width={barchart_width} height={barchart_height}>
-                        <BarChart offsetX={barchart_margin.left} offsetY={barchart_margin.top} 
-                            height={barchart_inner_height} width={barchart_inner_width} data={airlines}
-                            selectedAirline={selectedAirline} setSelectedAirline={setSelectedAirline}
-                        />
-                    </svg>
-                </Col>
-                <Col lg={8}>
-                    <h2>Airports</h2>
-                    <svg className={styles.svgStyle} id={"map"} width={map_width} height={map_height}>
-                        <AirportMap width={map_width} height={map_height} 
-                            countries={map} airports={airports} routes={routes}
-                            selectedAirline={selectedAirline}
-                        />
-                    </svg>
-                </Col>
-            </Row>
-            <Row>
-                <Col lg={4}>
-                    <h2>The Hub Cities</h2>
-                    <svg className={styles.svgStyle} id={"bubble"} width={hub_width} height={hub_height}>
-                        <AirportBubble width={hub_width} height={hub_height} 
-                            routes={routes} selectedAirline={selectedAirline}
-                        />
-                    </svg>
-                </Col>
-            </Row> 
-            </Container>)
+    //console.log(map, dataAll);
+    const changeHandler = (event) => {
+        setYear(event.target.value);
+    }
+
+    //Filter out redundant data when a fire was reported by multiple counties
+    const seen = new Set();
+    const data = dataAll.filter(item => {
+        if (!seen.has(item.UniqueId)) {
+            seen.add(item.UniqueId);
+            return true;
+        }
+        return false;
+    });
+
+    // filter out data according to year
+    const yearData = data.filter( d => {
+        return d.ArchiveYear == YEAR[year] ;
+    });
+
+    const mapData = yearData.filter( d =>{
+        return d.MajorIncident == 'TRUE' && d.Latitude !== 0;
+    })
+
+    // Aggregate data by year
+    const aggregatedData = AggregateDataByYear(data);
+    
+    const selectedPoint = dataAll.filter(d => d.station===selectedUniqueId)[0];
+     // Note: stationYearData is the data of the year of a seleted station. 
+     const stationYearData = dataAll.filter( d=> {
+        return d.UniqueId ==selectedUniqueId;
+    }); 
+    
+    return (<div className={styles.body}>
+        <div className={styles.slidecontainer}>
+            <input key="slide" type='range' min='0' max='6' value={year} step='1' onChange={changeHandler} class={styles.slider}/>
+            <input key="yearText" type="text" value={YEAR[year]} readOnly/>
+        </div>
+            <svg width={WIDTH} height={HEIGHT}>
+                <g>
+                <SymbolMap offsetX={margin.left} offsetY={margin.top} height={innerHeight} 
+                width={(innerWidth-margin.gap)/2} data={mapData} map={map}selectedUniqueId={selectedUniqueId} 
+               setSelectedUniqueId={setSelectedUniqueId}/>
+                {<MultipleLineChart offsetX={margin.left+innerWidth/2+100} offsetY={margin.top} data={aggregatedData} height={(innerHeight-margin.gap)/2} 
+                width={(innerWidth-margin.gap)/2} selectedYear={year} setSelectedYear={setYear}/>}
+                </g>
+                {/* <Tooltip d={selectedPoint} stationYearData={stationYearData} left={margin.left+innerWidth/2} 
+                top={margin.top+40+innerHeight/2} height={(innerHeight-margin.gap)/2} width={(innerWidth-margin.gap)/2}/> */}
+            </svg>
+        {/* <div style={{position: "absolute", textAlign: "left", width: "240px",left:"40px", top:"40px"}}>
+            <h3>Citi bike 2020</h3>
+            <p>A visualization of the numbers of citi bike riders over 2020.</p>
+        </div> */}
+        
+    </div>)
 }
-
 
 export default CalFire
