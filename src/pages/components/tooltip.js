@@ -6,7 +6,7 @@ function Tooltip(props) {
     if (x === null|!d) {
         return <div></div>;
     } else {
-        console.log(d);
+        //console.log(d);
         const divStyle = {
             position: "absolute",
             textAlign: "left",

@@ -146,6 +146,7 @@ function MultipleLineChart(props){
         const line5 = d3.line().x(d => xScale(d.year)).y(d => yScale(d.totalStructuresDestroyed));
         const xTicks = xScale.domain();
         const [yAxisScale, setyAxisScale] = React.useState(() => d3.scaleLinear().range([height, 0]).domain([0, 1]).nice());
+        const yLabel = (!selectedAttr)? "Standardized attributes of the wildfires": selectedAttr;
 
         const getLineOpacity = (selectedAttr, attr) => {
             if (!selectedAttr) {
@@ -162,31 +163,31 @@ function MultipleLineChart(props){
                     const min1 = d3.min(data, d => d.totalAcresBurned);
                     const max1 = d3.max(data, d => d.totalAcresBurned);
                     const yScale1 = d3.scaleLinear().range([height, 0])
-                    .domain([min1, max1]).nice();
+                    .domain([min1-0.125*(max1-min1), max1+0.125*(max1-min1)]);
                     return yScale1
                 case "Total Personnel Involved":
                     const min2 = d3.min(data, d => d.totalPersonnelInvolved);
                     const max2 = d3.max(data, d => d.totalPersonnelInvolved)
                     const yScale2 = d3.scaleLinear().range([height, 0])
-                    .domain([min2, max2]).nice();
+                    .domain([min2-0.125*(max2-min2), max2+0.125*(max2-min2)]);
                     return yScale2;
                 case "Total Crews Involved":
                     const min3 = d3.min(data, d => d.totalCrewsInvolved);
                     const max3 = d3.max(data, d => d.totalCrewsInvolved)
                     const yScale3 = d3.scaleLinear().range([height, 0])
-                    .domain([min3,max3]).nice();
+                    .domain([min3-0.125*(max3-min3), max3+0.125*(max3-min3)]);
                     return yScale3;
                 case "Total Injuries":
                     const min4 = d3.min(data, d => d.totalInjuries);
                     const max4 = d3.max(data, d => d.totalInjuries)
                     const yScale4 = d3.scaleLinear().range([height, 0])
-                    .domain([min4, max4]).nice();
+                    .domain([min4-0.125*(max4-min4), max4+0.125*(max4-min4)]);
                     return yScale4;
                 case "Total Structures Destroyed":
                     const min5 = d3.min(data, d => d.totalStructuresDestroyed);
                     const max5 = d3.max(data, d => d.totalStructuresDestroyed)
                     const yScale5 = d3.scaleLinear().range([height, 0])
-                    .domain([min5, max5]).nice();
+                    .domain([min5-0.125*(max5-min5), max5+0.125*(max5-min5)]);
                     return yScale5;
                 default:
                     return yScale;
@@ -194,17 +195,53 @@ function MultipleLineChart(props){
         }
 
         
+
+        const colorMap = {
+            "Total Acres Burned": "#FF7F50",
+            "Total Personnel Involved": "#0033CC",
+            "Total Crews Involved": "#FF6B6B",
+            "Total Injuries": "#404040",
+            "Total Structures Destroyed": "#6699CC"
+        };
+    
+        // Existing component code...
+    
+        const renderLegend = () => {
+            const legendWidth = 200; // Width of the legend box
+            const legendHeight = 100 // Height of the legend box
+            const legendOffsetX = width-legendWidth+50; // Position X of the legend box
+            const legendOffsetY = 50; // Position Y of the legend box
+    
+            return (
+                <g transform={`translate(${legendOffsetX},${legendOffsetY})`}>
+                    <rect width={legendWidth} height={legendHeight} fill="white" opacity="0.5"/>
+                    {Object.keys(colorMap).map((key, index) => {
+                        const y = 10 + index * 15;
+                        return (
+                            <g key={key} transform={`translate(10, ${y})`}>
+                                <rect width={10} height={10} fill={colorMap[key]} />
+                                <text x={20} y={10} style={{ fontSize: '10px' }}>{key}</text>
+                            </g>
+                        );
+                    })}
+                </g>
+            );
+        };
+    
+
+        
         return <g transform={`translate(${offsetX},${offsetY})`}>
             <line y2={height} stroke={`black`} />
             {yAxisScale.ticks().map( tickValue => {
                 return <g key={tickValue} transform={`translate(-10, ${yAxisScale(tickValue)})`}>
+                        <line x2={10} stroke='black' />
                         <text style={{ textAnchor:'end', fontSize:'12px' }}>
                         {tickValue}
                         </text>
                     </g> 
             })}
-            <text style={{ textAnchor:'start', fontSize:'12px'}} transform={`translate(10, 0)rotate(0)`}>
-                    {selectedAttr}
+            <text style={{ textAnchor:'start', fontSize:'15px'}} transform={`translate(10, 0)rotate(0)`}>
+                    {yLabel}
                 </text>
             <line x1={0} y1={height} x2={width} y2={height} stroke={`black`} />
             {xTicks.map( tickValue => {
@@ -273,61 +310,79 @@ function MultipleLineChart(props){
              selectedAttr={selectedAttr} setSelectedAttr={setSelectedAttr} 
              selectedYear={selectedYear} setSelectedYear={setSelectedYear}></Points>
 
-            {/* <text style={{ textAnchor:'end', fontSize:'18px'}} transform={`translate(${xScale(week1.slice(-1)[0].date.slice(0, 3))}, ${yScale(week1.slice(-1)[0].value)})`}>
-                            {"Week 1"}
-                </text>
-            <text style={{ textAnchor:'end', fontSize:'18px'}} transform={`translate(${xScale(week2.slice(-1)[0].date.slice(0, 3))}, ${yScale(week2.slice(-1)[0].value)})`}>
-                            {"Week 2"}
-                </text>
-            <text style={{ textAnchor:'end', fontSize:'18px'}} transform={`translate(${xScale(week3.slice(-1)[0].date.slice(0, 3))+60}, ${yScale(week3.slice(-1)[0].value)+10})`}>
-                            {"Week 3"}
-            </text>
-            <text style={{ textAnchor:'end', fontSize:'18px'}} transform={`translate(${xScale(week4.slice(-1)[0].date.slice(0, 3))+60}, ${yScale(week4.slice(-1)[0].value)+10})`}>
-                            {"Week 4"}
-            </text>
-            <text style={{ textAnchor:'end', fontSize:'18px'}} transform={`translate(${xScale(week5.slice(-1)[0].date.slice(0, 3))+60}, ${yScale(week5.slice(-1)[0].value)+10})`}>
-                            {"Week 5"}
-            </text> */}
+            {renderLegend()}
 
             </g>
 
 }
 
-function BarChart(props) {
-    const { offsetX, offsetY, data, height, width, selectedStation, setSelectedStation } = props;
-        const xScale = scaleBand().range([0, width])
-            .domain(data.map(d => d.station))
-        const yScale = scaleLinear().range([height, 0])
-            .domain([0, max(data, d => d.start > d.end? d.start:d.end)])
-            .nice();
-        const getColor = (selectedStation, station) => {
-                return selectedStation&&station===selectedStation ? "red" : "#99d594";
-            };
 
+function BarChart(props) {
+    const { offsetX, offsetY, data, height, width, year, selectedCounty, setSelectedCounty } = props;
+
+    // Sort and take the top 15 counties
+    const topCounties = [...data].sort((a, b) => b.totalAcresBurned - a.totalAcresBurned).slice(0, 15);
+
+    const xScale = scaleBand()
+        .range([0, width])
+        .domain(topCounties.map(d => d.county))
+        .padding(0.1);
+
+    const yScale = scaleLinear()
+        .range([height, 0])
+        .domain([0, max(topCounties, d => d.totalAcresBurned)])
+        .nice();
+
+    const getColor = (selectedCounty, county) => {
+        return selectedCounty && county === selectedCounty ? "steelblue" : "#8B0000";
+    };
     
-    return <g transform={`translate(${offsetX}, ${offsetY})`} >
-        {/* the text needed is given as the following */}
-        <text style={{ textAnchor:'start', fontSize:'15px'}} transform={`translate(${width/3}, 0)`}>
-                {"Num. of ridders start from a station"}
-        </text>
-        {/* start your code here */}
-        {<line y2={height} stroke='black'/>}
-            {yScale.ticks(5).map(tickValue => 
-                <g key={tickValue+"up"} transform={`translate(-10, ${yScale(tickValue)})`}>
+    const title = "Top 10 Counties by Acres Burned in " + year;
+
+    return (
+        <g transform={`translate(${offsetX}, ${offsetY})`}>
+            {/* Updated text description */}
+            <text style={{ textAnchor: 'start', fontSize: '15px'}} transform={`translate(0, -10)`}>
+                {title}
+            </text>
+            {/* X-axis*/}
+            <line x1={0} x2={width} y1={height} y2={height} stroke='black'/>
+            {topCounties.map(d => (
+                <text key={d.county + "_label"}
+                      x={xScale(d.county)+xScale.bandwidth() / 2}
+                      y={height}
+                      style={{ textAnchor: 'start', fontSize: '12px'}}
+                      transform={`rotate(40 ${xScale(d.county)}, ${height})`}>
+                    {d.county}
+                </text>
+            ))}
+            {/* Y-axis */}
+            <line y2={height} stroke='black'/>
+            {yScale.ticks(5).map(tickValue => (
+                <g key={tickValue} transform={`translate(-10, ${yScale(tickValue)})`}>
                     <line x2={10} stroke='black' />
-                    <text style={{ textAnchor:'end', fontSize:'10px' }} >
+                    <text style={{ textAnchor: 'end', fontSize: '10px' }}>
                         {tickValue}
                     </text>
                 </g>
-            )}
-            {data.map( d =>
-                <rect key={d.station+"barUp"} x={xScale(d.station)} y={yScale(d.start)}
-                width={xScale.bandwidth()} height={height-yScale(d.start)} stroke="black" 
-                fill={getColor(selectedStation, d.station)} 
-                onMouseEnter={() => setSelectedStation(d.station)} 
-                onMouseOut={()=> setSelectedStation(null)} />  
-            )}
-    </g>
+            ))}
+            {/* Bars for each county */}
+            {topCounties.map(d => (
+                <rect key={d.county}
+                      x={xScale(d.county)}
+                      y={yScale(d.totalAcresBurned)}
+                      width={xScale.bandwidth()}
+                      height={height - yScale(d.totalAcresBurned)}
+                      stroke="black"
+                      fill={getColor(selectedCounty, d.county)}
+                      onMouseEnter={() => setSelectedCounty(d.county)}
+                      onMouseOut={() => setSelectedCounty(null)} />
+            ))}
+            
+        </g>
+    );
 }
 
+
+export {MultipleLineChart, BarChart};
 

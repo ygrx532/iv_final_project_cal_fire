@@ -5,7 +5,7 @@ import { scaleLinear, min, max } from "d3";
 
 
 export function SymbolMap(props) {
-    const {offsetX, offsetY, map, data, height, width,selectedUniqueId,setSelectedUniqueId, setTooltipX, setTooltipY} = props;
+    const {offsetX, offsetY, map, data, height, width,selectedUniqueId,setSelectedUniqueId, setTooltipX, setTooltipY, selectedCounty} = props;
     const projection = geoMercator().fitSize([width, height], map);
     const path = geoPath(projection);
     const radius = scaleLinear().range([4, 20])
@@ -28,8 +28,14 @@ export function SymbolMap(props) {
     }
     return <g transform={`translate(${offsetX}, ${offsetY})`}>
             {map.features.map((feature, idx) => {
-                return <path key={idx+"boundary"} className={styles.boundary} d={path(feature)} />
+                // Assume each feature has a property `name` that contains the county's name
+                const className = feature.properties.name === selectedCounty ? `${styles.boundary} ${styles.highlighted}` : styles.boundary;
+
+                return <path key={idx + "boundary"} className={className} d={path(feature)} />;
             })}
+            {/* {map.features.map((feature, idx) => {
+                return <path key={idx+"boundary"} className={styles.boundary} d={path(feature)} />
+            })} */}
             {data.map(d => {
                 const [x, y] =  projection([d.Longitude, d.Latitude]);
                 //console.log(d.Longitude, x, d.Latitude, y);

@@ -2,7 +2,13 @@ function AggregateDataByYear(data) {
     const result = data.reduce((acc, d) => {
     const year = d.ArchiveYear;
     if (!acc[year]) {
-        acc[year] = {year: year, totalAcresBurned:0, totalInjuries: 0, totalCrewsInvolved: 0, totalPersonnelInvolved:0, totalStructuresDestroyed:0 };
+        acc[year] = {
+          year: year, 
+          totalAcresBurned:0, 
+          totalInjuries: 0, 
+          totalCrewsInvolved: 0, 
+          totalPersonnelInvolved:0, 
+          totalStructuresDestroyed:0 };
         }
         acc[year].totalAcresBurned += d.AcresBurned
         acc[year].totalInjuries += d.Injuries;
@@ -13,6 +19,30 @@ function AggregateDataByYear(data) {
         },{});
     return Object.values(result);
     }
+
+function AggregateDataByCounty(data) {
+    const result = data.reduce((acc, d) => {
+        const county = d.Counties;
+        if (!acc[county]) {
+            acc[county] = {
+                county: county,
+                totalAcresBurned: 0,
+                totalInjuries: 0,
+                totalStructuresDestroyed: 0,
+                totalCrewsInvolved: 0,
+                totalPersonnelInvolved: 0
+            };
+        }
+        acc[county].totalAcresBurned += d.AcresBurned;
+        acc[county].totalInjuries += d.Injuries;
+        acc[county].totalStructuresDestroyed += d.StructuresDestroyed;
+        acc[county].totalCrewsInvolved += d.CrewsInvolved;
+        acc[county].totalPersonnelInvolved += d.PersonnelInvolved;
+        return acc;
+    }, {});
+    return Object.values(result);
+    }
+  
 
 
 // Function to normalize the numerical attributes of each object in the data array
@@ -32,7 +62,7 @@ function NormalizeData(data) {
       let normalizedItem = { year: item.year };
   
       keys.forEach(key => {
-        normalizedItem[key] = (item[key] - minMax[key].min) / (minMax[key].max - minMax[key].min);
+        normalizedItem[key] = 0.1+ 0.8*(item[key] - minMax[key].min) / (minMax[key].max - minMax[key].min);
       });
   
       return normalizedItem;
@@ -46,4 +76,4 @@ function NormalizeData(data) {
   };
 
 
-export { AggregateDataByYear, NormalizeData, HandlerPosition}
+export { AggregateDataByYear, AggregateDataByCounty, NormalizeData, HandlerPosition}

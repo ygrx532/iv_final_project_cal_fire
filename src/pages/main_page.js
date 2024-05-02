@@ -1,9 +1,9 @@
 import React from "react";
-import { csv, json } from "d3";
+import { csv, json, select } from "d3";
 import styles from "../styles/week12_styles.module.css";
 import { SymbolMap } from "./components/symbolMap";
-import { AggregateDataByYear, HandlerPosition, NormalizeData } from "./components/utils";
-import { MultipleLineChart} from "./components/charts";
+import { AggregateDataByYear, AggregateDataByCounty, HandlerPosition, NormalizeData } from "./components/utils";
+import { MultipleLineChart, BarChart} from "./components/charts";
 import { Tooltip } from "./components/tooltip";
 
 
@@ -52,12 +52,13 @@ function useMap(jsonPath) {
 function CalFire(){
     const [year, setYear] = React.useState('2013');
     const [selectedUniqueId,setSelectedUniqueId] = React.useState(null);
+    const [selectedCounty, setSelectedCounty] = React.useState(null);
     const [tooltipX, setTooltipX]=React.useState(null);
     const [tooltipY, setTooltipY]=React.useState(null);
 
-    const WIDTH = 1600;
+    const WIDTH = 1500;
     const HEIGHT = 1000;
-    const margin = { top: 20, right: 80, bottom: 160, left: 80, gap:80 };
+    const margin = { top: 80, right: 80, bottom: 160, left: 80, gap:200 };
     const innerWidth = WIDTH - margin.left - margin.right;
     const innerHeight = HEIGHT - margin.top - margin.bottom;
 
@@ -92,8 +93,11 @@ function CalFire(){
         return d.MajorIncident == 'TRUE' && d.Latitude !== 0;
     })
 
-    // Aggregate data by year
-    const aggregatedData = AggregateDataByYear(data);
+    // Aggregate data by year for time series plot
+    const aggregatedYearData = AggregateDataByYear(data);
+
+    // Aggregate data by county for bar chart
+    const aggregateCountyData = AggregateDataByCounty(yearData);
 
     const selectedFire = dataAll.filter(d => d.UniqueId===selectedUniqueId)[0];
     
@@ -109,10 +113,14 @@ function CalFire(){
                 <SymbolMap offsetX={margin.left} offsetY={margin.top} height={innerHeight} width={(innerWidth-margin.gap)/2} 
                 data={mapData} map={map}
                 selectedUniqueId={selectedUniqueId} setSelectedUniqueId={setSelectedUniqueId}
-                setTooltipX={setTooltipX} setTooltipY={setTooltipY}/>
+                setTooltipX={setTooltipX} setTooltipY={setTooltipY}
+                selectedCounty={selectedCounty}/>
 
-                <MultipleLineChart offsetX={margin.left+innerWidth/2+100} offsetY={margin.top} data={aggregatedData} height={(innerHeight-margin.gap)/2} 
+                <MultipleLineChart offsetX={margin.left+innerWidth/2} offsetY={margin.top} data={aggregatedYearData} height={(innerHeight-margin.gap)/2} 
                 width={(innerWidth-margin.gap)/2} selectedYear={year} setSelectedYear={setYear}/>
+
+                <BarChart offsetX={margin.left+innerWidth/2} offsetY={margin.top + (innerHeight-margin.gap)/2 + 100} data = {aggregateCountyData} 
+                height={(innerHeight-margin.gap)/2} width={(innerWidth-margin.gap)/2} year = {year} selectedCounty = {selectedCounty} setSelectedCounty = {setSelectedCounty}/>
 
                 </g>
                 
@@ -120,10 +128,10 @@ function CalFire(){
         
         <div><Tooltip d={selectedFire} x={tooltipX} y={tooltipY}></Tooltip></div>
             
-        {/* <div style={{position: "absolute", textAlign: "left", width: "240px",left:"40px", top:"40px"}}>
-            <h3>Citi bike 2020</h3>
-            <p>A visualization of the numbers of citi bike riders over 2020.</p>
-        </div> */}
+        {<div style={{position: "absolute", textAlign: "left", width: "300px",left:"40px", top:"40px"}}>
+            <h3>California Fire 2013-2019</h3>
+            <p>A visualization of the wildfire incidents in california from 2013-2019.</p>
+        </div>}
         
     </div>)
 }
