@@ -1,6 +1,6 @@
 import React from "react";
 import { csv, json, select } from "d3";
-import styles from "../styles/week12_styles.module.css";
+import styles from "../styles/final_project_styles.module.css";
 import { SymbolMap } from "./components/symbolMap";
 import { AggregateDataByYear, AggregateDataByCounty, HandlerPosition, NormalizeData } from "./components/utils";
 import { MultipleLineChart, BarChart} from "./components/charts";
@@ -102,12 +102,11 @@ function CalFire(){
     const selectedFire = dataAll.filter(d => d.UniqueId===selectedUniqueId)[0];
     
     return (<div className={styles.body}>
-        <div className={styles.slidecontainer}>
-            <input key="slide" type='range' min='2013' max='2019' value={year} step='1' onChange={changeHandler} className={styles.slider}/>
-            <div style={{ position: 'absolute', left: `calc(${HandlerPosition(year)}%)`, bottom: '-20px' }}>
-                {year}
-            </div>
+        <div style={{position: "absolute", textAlign: "left", width: "300px",left:"40px", top:"40px"}}>
+            <h3>California Fire 2013-2019</h3>
+            <p>A visualization of the wildfire incidents in california from 2013-2019.</p>
         </div>
+        
             <svg width={WIDTH} height={HEIGHT}>
                 <g>
                 <SymbolMap offsetX={margin.left} offsetY={margin.top} height={innerHeight} width={(innerWidth-margin.gap)/2} 
@@ -116,10 +115,10 @@ function CalFire(){
                 setTooltipX={setTooltipX} setTooltipY={setTooltipY}
                 selectedCounty={selectedCounty}/>
 
-                <MultipleLineChart offsetX={margin.left+innerWidth/2} offsetY={margin.top} data={aggregatedYearData} height={(innerHeight-margin.gap)/2} 
+                <MultipleLineChart offsetX={margin.left+innerWidth/2} offsetY={margin.top+50} data={aggregatedYearData} height={(innerHeight-margin.gap)/2} 
                 width={(innerWidth-margin.gap)/2} selectedYear={year} setSelectedYear={setYear}/>
 
-                <BarChart offsetX={margin.left+innerWidth/2} offsetY={margin.top + (innerHeight-margin.gap)/2 + 100} data = {aggregateCountyData} 
+                <BarChart offsetX={margin.left+innerWidth/2} offsetY={margin.top + innerHeight/2+50} data = {aggregateCountyData} 
                 height={(innerHeight-margin.gap)/2} width={(innerWidth-margin.gap)/2} year = {year} selectedCounty = {selectedCounty} setSelectedCounty = {setSelectedCounty}/>
 
                 </g>
@@ -128,10 +127,12 @@ function CalFire(){
         
         <div><Tooltip d={selectedFire} x={tooltipX} y={tooltipY}></Tooltip></div>
             
-        {<div style={{position: "absolute", textAlign: "left", width: "300px",left:"40px", top:"40px"}}>
-            <h3>California Fire 2013-2019</h3>
-            <p>A visualization of the wildfire incidents in california from 2013-2019.</p>
-        </div>}
+        <div className={styles.slidercontainer}>
+            <input key="slide" type='range' min='2013' max='2019' value={year} step='1' onChange={changeHandler} className={styles.slider}/>
+            <div style={{ position: 'absolute', left: `calc(${HandlerPosition(year)}%)`, bottom: '-20px' }}>
+                {year}
+            </div>
+        </div>
         
     </div>)
 }

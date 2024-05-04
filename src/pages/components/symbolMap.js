@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../../styles/week12_styles.module.css";
+import styles from "../../styles/final_project_styles.module.css";
 import { geoPath, geoMercator } from "d3-geo";
 import { scaleLinear, min, max } from "d3";
 
