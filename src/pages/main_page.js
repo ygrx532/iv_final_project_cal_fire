@@ -102,9 +102,9 @@ function CalFire(){
     const selectedFire = dataAll.filter(d => d.UniqueId===selectedUniqueId)[0];
     
     return (<div className={styles.body}>
-        <div style={{position: "absolute", textAlign: "left", width: "300px",left:"40px", top:"40px"}}>
-            <h3>California Fire 2013-2019</h3>
-            <p>A visualization of the wildfire incidents in california from 2013-2019.</p>
+        <div style={{position: "absolute", textAlign: "left", width: "1500px", top:"0px"}}>
+            <h1 style={{color: "Black", padding: "10px"}}>California Fire 2013-2019</h1>
+            <h3 style ={{paddingLeft: "12px"}}> A visualization of the wildfire incidents in california from 2013-2019.</h3>
         </div>
         
             <svg width={WIDTH} height={HEIGHT}>
