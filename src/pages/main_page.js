@@ -1,10 +1,10 @@
 import React from "react";
 import { csv, json, select } from "d3";
 import styles from "../styles/final_project_styles.module.css";
-import { SymbolMap } from "./components/symbolMap";
-import { AggregateDataByYear, AggregateDataByCounty, HandlerPosition, NormalizeData } from "./components/utils";
-import { MultipleLineChart, BarChart} from "./components/charts";
-import { Tooltip } from "./components/tooltip";
+import { SymbolMap } from "../components/symbolMap";
+import { AggregateDataByYear, AggregateDataByCounty, HandlerPosition, NormalizeData } from "../components/utils";
+import { MultipleLineChart, BarChart} from "../components/charts";
+import { Tooltip } from "../components/tooltip";
 
 
 
