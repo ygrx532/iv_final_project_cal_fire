@@ -1,6 +1,6 @@
 import { scaleLinear, scaleBand} from 'd3';
 
-export const Scales = {
+export const Scale = {
     linear: (min_value, max_value, start_pos, end_pos) => {
         // console.log('the linear scale for scatter plot/bar chart');
         return scaleLinear()
@@ -10,11 +10,16 @@ export const Scales = {
         },
     band: (discreteValueArray, start_pos, end_pos) => {
         // console.log('the x scale for the bar chart');
-        // console.log(stations);
         return scaleBand()
-        .range([start_pos, end_pos])
-        .domain(discreteValueArray);
+            .range([start_pos, end_pos])
+            .domain(discreteValueArray);
     }
 }
 
+// Create a function that returns the Scales object
+function Scales() {
+    return Scale;
+}
+
+// Set the function as the default export
 export default Scales;
