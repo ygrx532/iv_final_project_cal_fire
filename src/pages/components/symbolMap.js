@@ -24,7 +24,7 @@ export function SymbolMap(props) {
     };
     
     const getColor = (selectedUniqueId, uniqueId) => {
-        return selectedUniqueId&&uniqueId===selectedUniqueId ? "steelblue" : "red";
+        return selectedUniqueId&&uniqueId===selectedUniqueId ? "#f7bb43" : "red";
     }
     return <g transform={`translate(${offsetX}, ${offsetY})`}>
             {map.features.map((feature, idx) => {

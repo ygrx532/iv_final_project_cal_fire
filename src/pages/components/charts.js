@@ -50,7 +50,7 @@ function Points({ data, xScale, yScale, selectedAttr, setSelectedAttr, selectedY
                     cx={xScale(d.year)}
                     cy={yScale(d.totalPersonnelInvolved)}
                     r={getRadius(selectedPoint,xScale(d.year)+'Total Personnel Involved')}
-                    fill="#0033CC"
+                    fill="#FF281B"
                     opacity={getPointOpacity(selectedAttr,'Total Personnel Involved')}
                     onMouseEnter={(event) =>{ 
                         setSelectedAttr('Total Personnel Involved');
@@ -69,7 +69,7 @@ function Points({ data, xScale, yScale, selectedAttr, setSelectedAttr, selectedY
                     cx={xScale(d.year)}
                     cy={yScale(d.totalCrewsInvolved)}
                     r={getRadius(selectedPoint,xScale(d.year)+'Total Crews Involved')}
-                    fill="#FF6B6B"
+                    fill="#FDB750"
                     opacity={getPointOpacity(selectedAttr,'Total Crews Involved')}
                     onMouseEnter={(event) =>{ 
                         setSelectedAttr('Total Crews Involved');
@@ -88,7 +88,7 @@ function Points({ data, xScale, yScale, selectedAttr, setSelectedAttr, selectedY
                     cx={xScale(d.year)}
                     cy={yScale(d.totalInjuries)}
                     r={getRadius(selectedPoint,xScale(d.year)+'Total Injuries')}
-                    fill="#404040"
+                    fill="#B8390E"
                     opacity={getPointOpacity(selectedAttr,'Total Injuries')}
                     onMouseEnter={(event) =>{ 
                         setSelectedAttr('Total Injuries');
@@ -107,7 +107,7 @@ function Points({ data, xScale, yScale, selectedAttr, setSelectedAttr, selectedY
                     cx={xScale(d.year)}
                     cy={yScale(d.totalStructuresDestroyed)}
                     r={getRadius(selectedPoint,xScale(d.year)+'Total Structures Destroyed')}
-                    fill="#6699CC"
+                    fill="#3B0918"
                     opacity={getPointOpacity(selectedAttr,'Total Structures Destroyed')}
                     onMouseEnter={(event) =>{ 
                         setSelectedAttr('Total Structures Destroyed');
@@ -198,10 +198,10 @@ function MultipleLineChart(props){
 
         const colorMap = {
             "Total Acres Burned": "#FF7F50",
-            "Total Personnel Involved": "#0033CC",
-            "Total Crews Involved": "#FF6B6B",
-            "Total Injuries": "#404040",
-            "Total Structures Destroyed": "#6699CC"
+            "Total Personnel Involved": "#FF281B",
+            "Total Crews Involved": "#FDB750",
+            "Total Injuries": "#B8390E",
+            "Total Structures Destroyed": "#3B0918"
         };
     
         // Existing component code...
@@ -265,7 +265,7 @@ function MultipleLineChart(props){
                     setSelectedAttr(null);
                     setyAxisScale(()=>getyAxisScale(null));
                 }}/>
-            <path d={line2(normalizedData)} stroke={"#0033CC"} strokeWidth={3} fill={"none"}
+            <path d={line2(normalizedData)} stroke={"#FF281B"} strokeWidth={3} fill={"none"}
                 opacity = {getLineOpacity(selectedAttr,'Total Personnel Involved')}
                 onMouseEnter={(event)=> {
                     setSelectedAttr('Total Personnel Involved')
@@ -275,7 +275,7 @@ function MultipleLineChart(props){
                     setSelectedAttr(null);
                     setyAxisScale(()=>getyAxisScale(null));
                 }} />
-            <path d={line3(normalizedData)} stroke={"#FF6B6B"} strokeWidth={3} fill={"none"}
+            <path d={line3(normalizedData)} stroke={"#FDB750"} strokeWidth={3} fill={"none"}
                 opacity = {getLineOpacity(selectedAttr,'Total Crews Involved')}
                 onMouseEnter={(event)=> {
                     setSelectedAttr('Total Crews Involved')
@@ -285,7 +285,7 @@ function MultipleLineChart(props){
                     setSelectedAttr(null);
                     setyAxisScale(()=>getyAxisScale(null));
                 }} />
-            <path d={line4(normalizedData)} stroke={"#404040"} strokeWidth={3} fill={"none"}
+            <path d={line4(normalizedData)} stroke={"#B8390E"} strokeWidth={3} fill={"none"}
                 opacity = {getLineOpacity(selectedAttr,'Total Injuries')}
                 onMouseEnter={(event)=> {
                     setSelectedAttr('Total Injuries')
@@ -295,7 +295,7 @@ function MultipleLineChart(props){
                     setSelectedAttr(null);
                     setyAxisScale(()=>getyAxisScale(null));
                 }} />
-            <path d={line5(normalizedData)} stroke={"#6699CC"} strokeWidth={3} fill={"none"}
+            <path d={line5(normalizedData)} stroke={"#3B0918"} strokeWidth={3} fill={"none"}
                 opacity = {getLineOpacity(selectedAttr,'Total Structures Destroyed')}
                 onMouseEnter={(event)=> {
                     setSelectedAttr('Total Structures Destroyed')
@@ -334,7 +334,7 @@ function BarChart(props) {
         .nice();
 
     const getColor = (selectedCounty, county) => {
-        return selectedCounty && county === selectedCounty ? "steelblue" : "#8B0000";
+        return selectedCounty && county === selectedCounty ? "#F89700" : "#8B0000";
     };
     
     const title = "Top 10 Counties by Acres Burned in " + year;

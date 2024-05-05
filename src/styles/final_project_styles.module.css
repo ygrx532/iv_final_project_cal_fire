@@ -18,6 +18,15 @@
     stroke: #C0C0BB;
 }
 
+.pageheader{
+    font-weight: bold;
+    text-align: center;
+    background-color: #FBC490; 
+    background-image: linear-gradient(120deg, #FBAA60, #DF362D);
+    display: block;
+    color: white;
+}
+
 .sphere {
     fill:rgb(150, 209, 243);
 }
@@ -54,17 +63,17 @@
     appearance: none;
     width: 25px; /* Set a specific slider handle width */
     height: 25px; /* Slider handle height */
-    background: #04AA6D; /* Green background */
+    background: #FF4500; /* Green background */
     cursor: pointer; /* Cursor on hover */
 }
 
 .slider::-moz-range-thumb {
     width: 25px; /* Set a specific slider handle width */
     height: 25px; /* Slider handle height */
-    background: #04AA6D; /* Green background */
+    background: #FF4500; /* Green background */
     cursor: pointer; /* Cursor on hover */
 }
 
 .highlighted {
-    fill: steelblue;  /* Red fill */
+    fill: #F89700;  /* Red fill */
 }

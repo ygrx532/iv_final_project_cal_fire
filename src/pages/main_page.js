@@ -58,7 +58,7 @@ function CalFire(){
 
     const WIDTH = 1500;
     const HEIGHT = 1000;
-    const margin = { top: 80, right: 80, bottom: 160, left: 80, gap:200 };
+    const margin = { top: 20, right: 80, bottom: 160, left: 80, gap:200 };
     const innerWidth = WIDTH - margin.left - margin.right;
     const innerHeight = HEIGHT - margin.top - margin.bottom;
 
@@ -102,10 +102,10 @@ function CalFire(){
     const selectedFire = dataAll.filter(d => d.UniqueId===selectedUniqueId)[0];
     
     return (<div className={styles.body}>
-        <div style={{position: "absolute", textAlign: "left", width: "1500px", top:"0px"}}>
-            <h1 style={{color: "Black", padding: "10px"}}>California Fire 2013-2019</h1>
-            <h3 style ={{paddingLeft: "12px"}}> A visualization of the wildfire incidents in california from 2013-2019.</h3>
-        </div>
+        <header className={styles.pageheader}>
+            <h1 style={{color: "White", padding: "10px", fontSize:"32px"}}>California Fire 2013-2019</h1>
+            <h3 style ={{paddingLeft: "12px", fontSize:"16px", padding:"5px"}}> A visualization of the wildfire incidents in california from 2013-2019.</h3>
+        </header>
         
             <svg width={WIDTH} height={HEIGHT}>
                 <g>
