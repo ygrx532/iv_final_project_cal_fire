@@ -103,7 +103,7 @@ function CalFire(){
     
     return (<div className={styles.body}>
         <header className={styles.pageheader}>
-            <h1 style={{color: "White", padding: "10px", fontSize:"32px"}}>California Fire 2013-2019</h1>
+            <h1 style={{color: "White", padding: "10px", fontSize:"32px"}}>California Wildfire 2013-2019</h1>
             <h3 style ={{paddingLeft: "12px", fontSize:"16px", padding:"5px"}}> A visualization of the wildfire incidents in california from 2013-2019.</h3>
         </header>
         
