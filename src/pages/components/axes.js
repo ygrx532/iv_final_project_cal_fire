@@ -1,6 +1,6 @@
 import React from "react";
 
-export { XAxis, YAxis };
+
 
 function XAxis (props) {
     const { chartType, xScale, height, width, axisLable } = props;
@@ -53,3 +53,11 @@ function YAxis(props) {
     </g>
     
 }
+
+export {XAxis, YAxis};
+
+function MyComponent() {
+    return <div>My Component</div>;
+  }
+  
+  export default MyComponent;

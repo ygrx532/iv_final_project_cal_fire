@@ -16,3 +16,5 @@ export const Scales = {
         .domain(discreteValueArray);
     }
 }
+
+export default Scales;

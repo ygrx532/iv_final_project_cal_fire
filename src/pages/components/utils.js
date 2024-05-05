@@ -77,3 +77,9 @@ function NormalizeData(data) {
 
 
 export { AggregateDataByYear, AggregateDataByCounty, NormalizeData, HandlerPosition}
+
+function MyComponent() {
+  return <div>My Component</div>;
+}
+
+export default MyComponent;

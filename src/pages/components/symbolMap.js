@@ -51,3 +51,4 @@ export function SymbolMap(props) {
         </g>
     
 }
+export default SymbolMap;

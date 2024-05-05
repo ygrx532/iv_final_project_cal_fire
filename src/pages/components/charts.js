@@ -386,3 +386,9 @@ function BarChart(props) {
 
 export {MultipleLineChart, BarChart};
 
+function MyComponent() {
+    return <div>My Component</div>;
+  }
+  
+  export default MyComponent;
+

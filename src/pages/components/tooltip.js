@@ -37,3 +37,9 @@ function Tooltip(props) {
 }
 
 export {Tooltip};
+
+function MyComponent() {
+    return <div>My Component</div>;
+  }
+  
+  export default MyComponent;
